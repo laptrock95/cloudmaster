@@ -1,24 +1,19 @@
 version: '3.8'
 
 services:
-  # Node.js service
-  node-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    image: node:18.15.0
     working_dir: /app
-    command: npm start
+    command: >
+      sh -c "npm install && ls -al && npm run build && nginx -g 'daemon off;'"
     volumes:
       - .:/app
-    ports:
-      - "3000:3000"
 
-  # Nginx service
   nginx:
     image: nginx:alpine
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
-      - node-app
+      - app
     volumes:
       - ./build:/usr/share/nginx/html
